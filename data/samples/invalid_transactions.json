@@ -1,0 +1,45 @@
+
+[
+  {
+    "nombre": "Carlos",
+    "apellido": "Martinez",
+    "direccion": "Colonia Escalon, San Salvador",
+    "telefono": "7123-4567",
+    "edad": 28
+  },
+  {
+    "nombre": "Maria",
+    "apellido": "Lopez",
+    "direccion": "Santa Tecla, La Libertad",
+    "telefono": "7234-5678",
+    "correo": "maria@example.com"
+  },
+  {
+    "nombre": "Jose",
+    "apellido": "Ramirez",
+    "direccion": "Soyapango, San Salvador",
+    "telefono": "7345-6789",
+    "profesion": "Ingeniero"
+  },
+  {
+    "nombre": "Ana",
+    "apellido": "Hernandez",
+    "direccion": "Antiguo Cuscatlan, La Libertad",
+    "telefono": "7456-7890",
+    "fechaNacimiento": "1998-06-15"
+  },
+  {
+    "nombre": "Luis",
+    "apellido": "Gonzalez",
+    "direccion": "San Miguel, El Salvador",
+    "telefono": "7567-8901",
+    "estadoCivil": "Soltero"
+  },
+  {
+    "nombre": "Sofia",
+    "apellido": "Castro",
+    "direccion": "Santa Ana, El Salvador",
+    "telefono": "7678-9012",
+    "ocupacion": "Estudiante"
+  }
+]

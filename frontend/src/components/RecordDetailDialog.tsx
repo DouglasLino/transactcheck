@@ -8,7 +8,7 @@ const labels: Record<string, string> = {
 };
 
 export function RecordDetailDialog({ detail, onHide, onSelectRecord }: { detail: TransactionDetail | null; onHide(): void; onSelectRecord?(recordId: string): void }) {
-  return <Dialog visible={Boolean(detail)} onHide={onHide} header="Trazabilidad de la transacción" className="detail-dialog" modal>
+  return <Dialog visible={Boolean(detail)} onHide={onHide} header="Trazabilidad de la transacción" className="detail-dialog" modal dismissableMask closeOnEscape closable>
     {detail && <div className="detail-content">
       <div className="detail-meta"><Tag value={detail.category} severity={detail.category === 'VALID' ? 'success' : detail.category === 'INVALID' ? 'danger' : 'warning'} /><span><i className="pi pi-file" /> {detail.sourceFile}</span><code>{detail.jsonPath}</code></div>
       <section><h3>Modelo normalizado</h3>{detail.normalized ? <div className="field-grid">{Object.entries(labels).map(([key, label]) => <div key={key}><span>{label}</span><strong>{detail.normalized?.[key] == null ? 'null' : String(detail.normalized[key])}</strong></div>)}</div> : <p>Este objeto no se reconoció como transacción y no tiene representación normalizada.</p>}</section>
