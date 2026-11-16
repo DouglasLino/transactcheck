@@ -1,0 +1,6 @@
+{
+  "transactions": [
+    {"amount": 10, "currency": "USD"},
+  ]
+}
+

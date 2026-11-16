@@ -1,0 +1,20 @@
+{
+  "catalog": ["APPROVED", "REJECTED", "PENDING", "FAILED", "CANCELLED", "REFUNDED", "UNKNOWN"],
+  "mappings": {
+    "approved": "APPROVED",
+    "aprobado": "APPROVED",
+    "rejected": "REJECTED",
+    "rechazado": "REJECTED",
+    "pending": "PENDING",
+    "pendiente": "PENDING",
+    "failed": "FAILED",
+    "fallido": "FAILED",
+    "cancelled": "CANCELLED",
+    "canceled": "CANCELLED",
+    "cancelado": "CANCELLED",
+    "refunded": "REFUNDED",
+    "reembolsado": "REFUNDED"
+  },
+  "intentionallyUnmapped": ["SUCCESS", "PAID", "COMPLETED", "PROCESSING"]
+}
+

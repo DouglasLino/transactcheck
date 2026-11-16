@@ -1,0 +1,8 @@
+{
+  "transactionContainerNames": ["transactions", "transacciones", "payments", "pagos", "operations", "operaciones", "records", "registros"],
+  "sourceMetadataNames": ["metadata", "meta", "context"],
+  "excludedContextNames": ["summary", "resumen", "totals", "total", "subtotal", "items", "lineItems", "products", "productos", "taxes", "impuestos"],
+  "strongMarkerFields": ["transactionId", "status", "transactionDate", "transactionType", "referenceId"],
+  "ruleDescription": "Un objeto no excluido se reconoce con monto y moneda, o como transaccional incompleto cuando contiene al menos un campo obligatorio y evidencia adicional (contenedor transaccional o marcador fuerte). Los contenedores no se cuentan y no se desciende dentro de un registro ya reconocido."
+}
+

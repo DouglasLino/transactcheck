@@ -1,0 +1,31 @@
+{
+  "name": "transactcheck-frontend",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "engines": { "node": ">=22.12.0" },
+  "scripts": {
+    "sync-engine": "node scripts/sync-engine.mjs",
+    "predev": "npm run sync-engine",
+    "dev": "vite",
+    "typecheck": "tsc --noEmit",
+    "smoke:pyodide": "npm run sync-engine && node scripts/smoke-pyodide.mjs",
+    "prebuild": "npm run sync-engine",
+    "build": "tsc --noEmit && vite build",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "primeicons": "7.0.0",
+    "primereact": "10.9.7",
+    "react": "19.3.1",
+    "react-dom": "19.3.1"
+  },
+  "devDependencies": {
+    "@types/react": "19.3.0",
+    "@types/react-dom": "19.3.0",
+    "@vitejs/plugin-react": "6.3.0",
+    "pyodide": "314.0.8",
+    "typescript": "7.0.2",
+    "vite": "8.3.8"
+  }
+}
