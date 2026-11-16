@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Any
 
 from ..models import Diagnostic
-from ..normalization import FieldResolver, normalize_amount, normalize_currency, normalize_date, normalize_status
+from ..normalization import FieldResolver, extract_currency_affix, normalize_amount, normalize_currency, normalize_date, normalize_status
 
 
 def _diagnostic(
@@ -51,16 +51,28 @@ def normalize_record(
             resolved.pop(field, None)
 
     amount_original = resolved.get("amount")
-    amount, amount_error, amount_details = normalize_amount(amount_original)
+    currency_original = resolved.get("currency")
+    amount_input = amount_original
+    embedded_currency = None
+    embedded_currency_error = None
+    if currency_original is None:
+        amount_input, embedded_currency, embedded_currency_error = extract_currency_affix(
+            amount_original, configuration["currency_aliases"]
+        )
+    amount, amount_error, amount_details = normalize_amount(amount_input)
     if amount_error:
         diagnostics.append(_diagnostic(amount_error, "ERROR", "No fue posible normalizar el monto.", "amount", amount_original, source_file, json_path, amount_details or ""))
     elif amount_original is not None:
         transformations.append(f"amount se normalizó a la representación decimal exacta {amount}.")
 
-    currency_original = resolved.get("currency")
-    currency, currency_error, currency_details = normalize_currency(currency_original, configuration["currency_aliases"])
+    currency_input = currency_original if currency_original is not None else embedded_currency
+    currency, currency_error, currency_details = normalize_currency(currency_input, configuration["currency_aliases"])
+    if embedded_currency_error:
+        currency, currency_error, currency_details = "UNKNOWN", "UNKNOWN_CURRENCY", embedded_currency_error
     if currency_error:
         diagnostics.append(_diagnostic(currency_error, "ERROR", "No fue posible reconocer una moneda válida.", "currency", currency_original, source_file, json_path, currency_details or ""))
+    elif embedded_currency is not None:
+        transformations.append(f"currency se reconoció como {currency} por el símbolo inequívoco incluido en amount.")
     elif currency_original is not None and str(currency_original) != currency:
         transformations.append(f"currency se normalizó de {currency_original!s} a {currency}.")
 

@@ -11,6 +11,7 @@
     "jpy": "JPY",
     "¥": "JPY"
   },
-  "ambiguousSymbols": ["$"]
+  "ambiguousSymbols": ["$"],
+  "amountAffixPolicy": "Un alias con símbolo inequívoco al inicio o final del monto puede aportar la moneda cuando no existe un campo de moneda separado."
 }
 

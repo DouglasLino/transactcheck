@@ -1,6 +1,6 @@
 {
   "unambiguousFormats": ["ISO 8601", "YYYY-MM-DD", "YYYY-MM-DDTHH:mm:ss con zona opcional"],
-  "slashDatePolicy": "Evaluar DD/MM/YYYY y MM/DD/YYYY; aceptar solo si una opción es válida, ambas coinciden o existe contexto configurado.",
+  "slashDatePolicy": "Evaluar DD/MM/YYYY y MM/DD/YYYY, también cuando incluyan hora HH:mm[:ss]; aceptar solo si una opción es válida, ambas coinciden o existe contexto configurado.",
   "sourcePreferences": {},
   "unixTimestampsEnabled": false
 }

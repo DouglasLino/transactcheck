@@ -15,6 +15,6 @@
     "refunded": "REFUNDED",
     "reembolsado": "REFUNDED"
   },
-  "intentionallyUnmapped": ["SUCCESS", "PAID", "COMPLETED", "PROCESSING"]
+  "intentionallyUnmapped": ["SUCCESS", "PAID", "COMPLETED", "PROCESSING", "OK"]
 }
 

@@ -5,7 +5,7 @@ from datetime import date, datetime
 from typing import Any
 
 
-SLASH_DATE = re.compile(r"^(\d{1,2})/(\d{1,2})/(\d{4})$")
+SLASH_DATE = re.compile(r"^(\d{1,2})/(\d{1,2})/(\d{4})(?:[ T](\d{2}):(\d{2})(?::(\d{2}))?)?$")
 
 
 def _safe_date(year: int, month: int, day: int) -> date | None:
@@ -23,13 +23,24 @@ def normalize_date(value: Any) -> tuple[str | None, str | None, str | None]:
     candidate = value.strip()
     slash = SLASH_DATE.fullmatch(candidate)
     if slash:
-        first, second, year = map(int, slash.groups())
+        first, second, year = map(int, slash.groups()[:3])
+        time_parts = slash.groups()[3:]
+        hour, minute, second_value = (int(part or 0) for part in time_parts)
+        if time_parts[0] is not None:
+            try:
+                datetime(year, 1, 1, hour, minute, second_value)
+            except ValueError:
+                return None, "INVALID_DATE", "La hora no representa un valor válido."
         dmy = _safe_date(year, second, first)
         mdy = _safe_date(year, first, second)
         if dmy and mdy and dmy != mdy:
             return None, "AMBIGUOUS_DATE", "La fecha admite dos interpretaciones de calendario diferentes."
         selected = dmy or mdy
         if selected:
+            if time_parts[0] is not None:
+                return datetime.combine(selected, datetime.min.time()).replace(
+                    hour=hour, minute=minute, second=second_value
+                ).isoformat(timespec="seconds" if time_parts[2] is not None else "minutes"), None, None
             return selected.isoformat(), None, None
         return None, "INVALID_DATE", "La fecha no existe en el calendario."
     try:

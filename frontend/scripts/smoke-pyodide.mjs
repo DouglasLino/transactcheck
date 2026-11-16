@@ -37,17 +37,17 @@ const result = request('addFile', {
 });
 
 if (!result.accepted) throw new Error('El archivo de prueba fue rechazado por Pyodide.');
-if (result.summary.metrics.processedTransactions !== 3) throw new Error('Conteo transaccional inesperado en Pyodide.');
-if (result.summary.metrics.validTransactions !== 2 || result.summary.metrics.invalidTransactions !== 1) {
+if (result.summary.metrics.processedTransactions !== 8) throw new Error('Conteo transaccional inesperado en Pyodide.');
+if (result.summary.metrics.validTransactions !== 8 || result.summary.metrics.invalidTransactions !== 0) {
   throw new Error('Clasificación inesperada en Pyodide.');
 }
 const dashboard = request('getDashboard', { filters: { currency: 'USD' }, temporalGrouping: 'day' });
-if (dashboard.globalMetrics.processedTransactions !== 3 || dashboard.filteredMetrics.processedTransactions !== 1) {
+if (dashboard.globalMetrics.processedTransactions !== 8 || dashboard.filteredMetrics.processedTransactions !== 4) {
   throw new Error('Las métricas globales o filtradas del Dashboard son incorrectas en Pyodide.');
 }
-if (dashboard.filteredMetrics.currencyTotals.USD.positiveCount !== 1) {
+if (dashboard.filteredMetrics.currencyTotals.USD.positiveCount !== 4) {
   throw new Error('La agregación monetaria del Dashboard es incorrecta en Pyodide.');
 }
-const page = request('queryTransactions', { filters: { categories: ['INVALID'] }, page: 0, pageSize: 10 });
-if (page.total !== 1) throw new Error('El explorador paginado del Dashboard no devolvió la transacción inválida.');
+const page = request('queryTransactions', { filters: { categories: ['VALID'] }, page: 0, pageSize: 10 });
+if (page.total !== 8) throw new Error('El explorador paginado no devolvió las ocho transacciones válidas.');
 console.log(`Pyodide ${pyodide.version}: Dashboard integrado (global, filtros, moneda y paginación).`);

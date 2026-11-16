@@ -6,14 +6,14 @@
     "requiresSupportingTransactionalField": true
   },
   "fields": {
-    "transactionId": ["transactionId", "transaction_id", "idTransaccion", "id_transaccion", "operationId", "paymentId"],
+    "transactionId": ["transactionId", "transaction_id", "id", "idTransaccion", "id_transaccion", "operationId", "paymentId"],
     "source": ["source", "fuente", "provider", "origin"],
-    "amount": ["amount", "monto", "importe", "totalAmount", "transactionAmount"],
+    "amount": ["amount", "monto", "importe", "total", "totalAmount", "transactionAmount"],
     "currency": ["currency", "moneda", "divisa", "currencyCode", "codigoMoneda"],
-    "status": ["status", "estado", "transactionStatus"],
+    "status": ["status", "state", "result", "estado", "transactionStatus"],
     "transactionDate": ["transactionDate", "transaction_date", "fechaTransaccion", "fecha_transaccion", "date", "timestamp", "createdAt"],
     "transactionType": ["transactionType", "transaction_type", "tipoTransaccion", "tipo_transaccion", "operationType"],
-    "referenceId": ["referenceId", "reference_id", "referencia", "externalReference", "reference"],
+    "referenceId": ["referenceId", "reference_id", "ref", "referencia", "externalReference", "reference"],
     "description": ["description", "descripcion", "detalle", "concept"]
   },
   "forbiddenAmountAliases": ["unitPrice", "unit_price", "precioUnitario", "subtotal", "tax", "impuesto"]

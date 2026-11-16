@@ -2,13 +2,17 @@ from __future__ import annotations
 
 import json
 from decimal import Decimal
+from pathlib import Path
 
 from transactcheck_engine.engine import MAX_FILE_BYTES
 from transactcheck_engine.metrics import calculate_metrics
 from transactcheck_engine.normalization.amounts import normalize_amount
-from transactcheck_engine.normalization.currencies import normalize_currency
+from transactcheck_engine.normalization.currencies import extract_currency_affix, normalize_currency
 from transactcheck_engine.normalization.dates import normalize_date
 from transactcheck_engine.normalization.fields import normalize_status
+
+
+ROOT = Path(__file__).resolve().parents[1]
 
 
 def add(engine, file_id: str, name: str, data, size: int | None = None):
@@ -87,15 +91,46 @@ def test_currencies_statuses_and_dates(engine):
     assert normalize_currency("US$", currencies)[0] == "USD"
     assert normalize_currency("$", currencies)[:2] == ("UNKNOWN", "UNKNOWN_CURRENCY")
     assert normalize_currency("ZZZ", currencies)[1] == "UNKNOWN_CURRENCY"
+    assert extract_currency_affix("€99,99", currencies)[:2] == ("99,99", "EUR")
+    assert extract_currency_affix("$99.99", currencies)[1] is None
     assert normalize_status("aprobado", statuses)[0] == "APPROVED"
     assert normalize_status("COMPLETED", statuses)[0] == "UNKNOWN"
     assert normalize_date("30/04/2026")[0] == "2026-04-30"
     assert normalize_date("04/30/2026")[0] == "2026-04-30"
     assert normalize_date("04/04/2026")[0] == "2026-04-04"
     assert normalize_date("04/05/2026")[1] == "AMBIGUOUS_DATE"
+    assert normalize_date("10/03/2025 14:22")[1] == "AMBIGUOUS_DATE"
+    assert normalize_date("30/04/2026 14:22")[0] == "2026-04-30T14:22"
     assert normalize_date("31/02/2026")[1] == "INVALID_DATE"
     assert normalize_date("2024-02-29")[0] == "2024-02-29"
     assert normalize_date("2023-02-29")[1] == "INVALID_DATE"
+
+
+def test_heterogeneous_eight_transaction_regression(engine):
+    sample = ROOT / "data" / "samples" / "heterogeneous.json"
+    result = engine.add_file("heterogeneous", sample.name, sample.stat().st_size, sample.read_text(encoding="utf-8"))
+    assert result["accepted"] is True
+    metrics = engine.get_summary()["metrics"]
+    assert metrics["processedTransactions"] == 8
+    assert metrics["validTransactions"] == 8
+    assert metrics["invalidTransactions"] == 0
+
+    rows = engine.query_transactions(sort_field="transactionId", sort_order=1, page_size=20)["items"]
+    by_id = {row["transactionId"]: row for row in rows}
+    assert set(by_id) == {"tx_001", "204", "205", "tx_004", "tx_006", "207", "tx_008", None}
+    assert by_id["204"]["amount"] == "10050"
+    assert by_id["205"]["amount"] == "-45.20"
+    assert by_id["205"]["status"] == "REFUNDED"
+    assert by_id["207"]["amount"] == "0"
+    assert by_id["207"]["status"] == "FAILED"
+    assert by_id["tx_006"]["status"] == "PENDING"
+
+    reference_row = next(row for row in rows if row["referenceId"] == "A-77")
+    assert reference_row["amount"] == "99.99"
+    assert reference_row["currency"] == "EUR"
+    assert reference_row["transactionDate"] == "2025-03-10T14:22:00Z"
+    assert metrics["currencyTotals"]["EUR"]["negative"] == "-45.20"
+    assert metrics["currencyTotals"]["JPY"]["zeroCount"] == 1
 
 
 def test_only_amount_and_currency_determine_validity(engine):
