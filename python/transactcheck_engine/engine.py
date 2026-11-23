@@ -12,6 +12,8 @@ from .metrics import build_dashboard_analytics, calculate_metrics
 from .models import Diagnostic, RecordResult, json_safe
 from .normalization import FieldResolver
 from .validation import normalize_record
+from .skills import execute_transaction_query
+from .skills.transaction_query import TransactionQueryError
 
 
 MAX_FILES = 3
@@ -387,4 +389,18 @@ class SessionEngine:
 
     def get_rules(self) -> dict:
         return self.configuration
+
+    def execute_transaction_query(self, operation: str, arguments: dict | None = None) -> dict:
+        try:
+            result = execute_transaction_query(
+                self.records, self.file_diagnostics, self.duplicate_groups, operation, arguments
+            )
+            return {"ok": True, "skillId": "transaction-query", "operation": operation, "result": result}
+        except TransactionQueryError as error:
+            return {
+                "ok": False,
+                "skillId": "transaction-query",
+                "operation": operation,
+                "error": {"code": error.code, "message": str(error)},
+            }
 

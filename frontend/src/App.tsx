@@ -6,6 +6,7 @@ import { DashboardPage } from './pages/DashboardPage';
 import { TransactionsPage } from './pages/TransactionsPage';
 import { DiagnosticsPage } from './pages/DiagnosticsPage';
 import { RulesPage } from './pages/RulesPage';
+import { AssistantPage } from './pages/AssistantPage';
 
 export default function App() {
   const [view, setView] = useState<ViewId>('upload');
@@ -15,6 +16,7 @@ export default function App() {
     {view === 'transactions' && <TransactionsPage />}
     {view === 'diagnostics' && <DiagnosticsPage />}
     {view === 'rules' && <RulesPage />}
+    {view === 'assistant' && <AssistantPage />}
   </AppLayout>;
 }
 

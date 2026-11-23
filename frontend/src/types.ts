@@ -1,4 +1,4 @@
-export type ViewId = 'upload' | 'dashboard' | 'transactions' | 'diagnostics' | 'rules';
+export type ViewId = 'upload' | 'dashboard' | 'transactions' | 'diagnostics' | 'rules' | 'assistant';
 export type Category = 'VALID' | 'INVALID' | 'UNIDENTIFIED';
 export type Severity = 'ERROR' | 'WARNING' | 'INFO';
 export type Scope = 'FILE' | 'RECORD';

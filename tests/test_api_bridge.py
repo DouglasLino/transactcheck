@@ -52,3 +52,7 @@ def test_worker_camel_case_query_returns_loaded_transactions():
 
     duplicates = request("queryDuplicateGroups", {"filters": {}, "page": 0, "pageSize": 10})
     assert duplicates["total"] == 0
+
+    skill_result = request("executeTransactionQuery", {"operation": "extreme_amount", "arguments": {"direction": "maximum"}})
+    assert skill_result["ok"] is True
+    assert [(item["currency"], item["amount"]) for item in skill_result["result"]["groups"]] == [("EUR", "5"), ("USD", "10.25")]

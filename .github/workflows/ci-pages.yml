@@ -49,6 +49,10 @@ jobs:
         working-directory: frontend
         run: npm run typecheck
 
+      - name: Ejecutar pruebas del frontend
+        working-directory: frontend
+        run: npm test
+
       - name: Probar motor con Pyodide
         working-directory: frontend
         run: npm run smoke:pyodide

@@ -72,6 +72,8 @@ def dispatch(request: dict[str, Any]) -> Any:
         return engine.get_record(payload["recordId"])
     if action == "getRules":
         return engine.get_rules()
+    if action == "executeTransactionQuery":
+        return engine.execute_transaction_query(payload.get("operation", ""), payload.get("arguments"))
     raise ValueError(f"Acción no admitida: {action}")
 
 

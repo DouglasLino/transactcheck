@@ -1,4 +1,5 @@
 import type { CompactRecordQuery, DashboardAnalytics, DiagnosticQuery, DuplicateGroupQuery, Summary, TransactionDetail, TransactionFilters, TransactionQuery, WorkerRequest } from '../types';
+import type { TransactionQueryExecution, TransactionQueryProposal } from '../agent/contracts';
 
 type Resolver = { resolve: (value: unknown) => void; reject: (reason: Error) => void };
 
@@ -55,6 +56,12 @@ class EngineClient {
   }
   getRecord(recordId: string) { return this.request<TransactionDetail | null>({ action: 'getRecord', payload: { recordId } }); }
   getRules() { return this.request<Record<string, unknown>>({ action: 'getRules' }); }
+  executeTransactionQuery(proposal: TransactionQueryProposal) {
+    return this.request<TransactionQueryExecution>({
+      action: 'executeTransactionQuery',
+      payload: { operation: proposal.operation, arguments: proposal.arguments },
+    });
+  }
 }
 
 export const engineClient = new EngineClient();

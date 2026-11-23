@@ -261,3 +261,10 @@ Asegurar que el código de procesamiento pueda probarse en CPython cuando sea vi
 - Pruebas básicas ejecutadas; build y GitHub Actions configurados.
 - Despliegue a GitHub Pages desde main después de CI exitoso.
 - README y nota técnica académica preparados para revisión humana.
+
+18. Mantenimiento de documentación
+- Mantener `README.md` actualizado en la misma tarea cuando se implemente una funcionalidad, refactorización o cambio técnico relevante.
+- Redactar el README en español técnico, claro, objetivo y en tercera persona; describir el producto y su funcionamiento sin referencias al proceso de generación mediante IA.
+- Consolidar la documentación en sus secciones existentes, sin historial cronológico ni duplicaciones. Documentar solo capacidades implementadas y verificadas; diferenciar las funciones experimentales, limitaciones y pendientes.
+- Describir skills y agente IA de forma general únicamente cuando estén implementados. No presentar contratos, interfaces ni estructuras preparatorias como skills funcionales.
+- Conservar las justificaciones detalladas de refactorización, decisiones humanas, uso de IA, validaciones y evidencias académicas en `NOTA_TECNICA.md`.

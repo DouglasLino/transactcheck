@@ -10,6 +10,7 @@ const items: Array<{ id: ViewId; icon: string; label: string }> = [
   { id: 'transactions', icon: 'pi-list', label: 'Transacciones' },
   { id: 'diagnostics', icon: 'pi-exclamation-triangle', label: 'Inconsistencias' },
   { id: 'rules', icon: 'pi-book', label: 'Reglas' },
+  { id: 'assistant', icon: 'pi-sparkles', label: 'Asistente IA' },
 ];
 
 export function AppLayout({ view, onNavigate, children }: { view: ViewId; onNavigate(view: ViewId): void; children: React.ReactNode }) {

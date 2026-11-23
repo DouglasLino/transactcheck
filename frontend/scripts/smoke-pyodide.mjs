@@ -50,4 +50,8 @@ if (dashboard.filteredMetrics.currencyTotals.USD.positiveCount !== 4) {
 }
 const page = request('queryTransactions', { filters: { categories: ['VALID'] }, page: 0, pageSize: 10 });
 if (page.total !== 8) throw new Error('El explorador paginado no devolvió las ocho transacciones válidas.');
-console.log(`Pyodide ${pyodide.version}: Dashboard integrado (global, filtros, moneda y paginación).`);
+const skill = request('executeTransactionQuery', { operation: 'summary', arguments: {} });
+if (!skill.ok || skill.result.processedTransactions !== result.summary.metrics.processedTransactions) {
+  throw new Error('transaction-query no coincide con las métricas de la sesión Pyodide.');
+}
+console.log(`Pyodide ${pyodide.version}: Dashboard y transaction-query integrados sobre la misma sesión.`);
