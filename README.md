@@ -241,9 +241,12 @@ El flujo de trabajo se encuentra en:
 Este flujo ejecuta las pruebas, valida el frontend y genera la compilación de producción.
 
 
-Una vez publicado, el proyecto puede abrirse desde:
+El workflow compila y publica ambas ramas dentro del mismo sitio:
 
-https://douglaslino.github.io/transactcheck/
+- Versión estable de `main`: https://douglaslino.github.io/transactcheck/
+- Versión agentic de `feature/agentic-transformersjs`: https://douglaslino.github.io/transactcheck/refactor/
+
+Una actualización de cualquiera de estas dos ramas vuelve a construir las dos versiones, ejecuta sus validaciones y genera un único artefacto de GitHub Pages.
 
 GitHub Pages únicamente aloja los archivos de la aplicación. Python se ejecuta en el navegador mediante Pyodide.
 
