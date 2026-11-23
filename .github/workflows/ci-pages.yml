@@ -5,11 +5,11 @@ on:
   push:
     branches:
       - main
-      - refactor-skills
+      - feature/agentic-transformersjs
   pull_request:
     branches:
       - main
-      - refactor-skills
+      - feature/agentic-transformersjs
   workflow_dispatch:
 
 permissions:
