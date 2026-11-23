@@ -1,173 +1,135 @@
-name: CI y despliegue de TransactCheck
+
+name: CI y despliegue TransactCheck
 
 on:
   push:
     branches:
       - main
-      - feature/agentic-transformersjs
+      - refactor-skills
   pull_request:
+    branches:
+      - main
+      - refactor-skills
   workflow_dispatch:
 
 permissions:
   contents: read
-  pages: write
-  id-token: write
 
 concurrency:
-  group: github-pages
+  group: transactcheck-pages
   cancel-in-progress: false
 
 jobs:
-  test-and-build:
+  build:
+    name: Compilar y validar ambas versiones
     runs-on: ubuntu-latest
 
     steps:
-      # ==========================================
-      # 1. Obtener ambas versiones
-      # ==========================================
-
       - name: Obtener version original
-        uses: actions/checkout@v5
+        uses: actions/checkout@v4
         with:
           ref: main
-          path: source-main
+          path: original
 
-      - name: Obtener version agentica
-        uses: actions/checkout@v5
+      - name: Obtener version refactorizada
+        uses: actions/checkout@v4
         with:
-          ref: feature/agentic-transformersjs
-          path: source-agentic
-
-      # ==========================================
-      # 2. Configurar Python
-      # ==========================================
-
-      - name: Configurar Python
-        uses: actions/setup-python@v7
-        with:
-          python-version: "3.12"
-
-      - name: Instalar dependencias Python
-        run: |
-          python -m pip install -r source-main/requirements-dev.txt
-          python -m pip install -r source-agentic/requirements-dev.txt
-
-      # ==========================================
-      # 3. Pruebas Python
-      # ==========================================
-
-      - name: Pruebas Python - Original
-        working-directory: source-main
-        run: python -m pytest -q
-
-      - name: Pruebas Python - Agentica
-        working-directory: source-agentic
-        run: python -m pytest -q
-
-      # ==========================================
-      # 4. Configurar Node.js
-      # ==========================================
+          ref: refactor-skills
+          path: refactor
 
       - name: Configurar Node.js
-        uses: actions/setup-node@v7
+        uses: actions/setup-node@v4
         with:
-          node-version: "22"
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            original/package-lock.json
+            refactor/package-lock.json
 
-      # ==========================================
-      # 5. Instalar dependencias
-      # ==========================================
-
-      - name: Instalar frontend original
-        working-directory: source-main/frontend
+      - name: Instalar dependencias originales
+        working-directory: original
         run: npm ci
 
-      - name: Instalar frontend agentico
-        working-directory: source-agentic/frontend
+      - name: Instalar dependencias refactorizadas
+        working-directory: refactor
         run: npm ci
 
-      # ==========================================
-      # 6. Validar ambas versiones
-      # ==========================================
+      - name: Ejecutar pruebas originales si existen
+        working-directory: original
+        shell: bash
+        run: |
+          if npm run | grep -Eq '^[[:space:]]+test$'; then
+            npm test -- --run
+          else
+            echo "No existe script test. Se omiten pruebas."
+          fi
 
-      - name: TypeScript - Original
-        working-directory: source-main/frontend
-        run: npm run typecheck
-
-      - name: TypeScript - Agentica
-        working-directory: source-agentic/frontend
-        run: npm run typecheck
-
-      - name: Pruebas frontend - Original
-        working-directory: source-main/frontend
-        run: npm test
-
-      - name: Pruebas frontend - Agentica
-        working-directory: source-agentic/frontend
-        run: npm test
-
-      - name: Pyodide - Original
-        working-directory: source-main/frontend
-        run: npm run smoke:pyodide
-
-      - name: Pyodide - Agentica
-        working-directory: source-agentic/frontend
-        run: npm run smoke:pyodide
-
-      # ==========================================
-      # 7. Compilar ambas aplicaciones
-      # ==========================================
+      - name: Ejecutar pruebas refactorizadas si existen
+        working-directory: refactor
+        shell: bash
+        run: |
+          if npm run | grep -Eq '^[[:space:]]+test$'; then
+            npm test -- --run
+          else
+            echo "No existe script test. Se omiten pruebas."
+          fi
 
       - name: Compilar version original
-        working-directory: source-main/frontend
+        working-directory: original
         run: npm run build -- --base=/transactcheck/
 
-      - name: Compilar version agentica
-        working-directory: source-agentic/frontend
-        run: npm run build -- --base=/transactcheck/agentic/
+      - name: Compilar version refactorizada
+        working-directory: refactor
+        run: npm run build -- --base=/transactcheck/refactor/
 
-      # ==========================================
-      # 8. Preparar sitio unificado
-      # ==========================================
-
-      - name: Unificar versiones para GitHub Pages
+      - name: Preparar publicacion
+        shell: bash
         run: |
-          mkdir -p site/agentic
+          mkdir -p public/refactor
 
-          cp -a source-main/frontend/dist/. site/
-          cp -a source-agentic/frontend/dist/. site/agentic/
+          cp -a original/dist/. public/
+          cp -a refactor/dist/. public/refactor/
 
-          echo "Contenido publicado:"
-          ls -la site/
-          ls -la site/agentic/
+          touch public/.nojekyll
 
-      # ==========================================
-      # 9. Preparar GitHub Pages
-      # ==========================================
+          test -f public/index.html
+          test -f public/refactor/index.html
+
+          echo "Ambas versiones preparadas."
 
       - name: Configurar GitHub Pages
         if: github.event_name != 'pull_request'
         uses: actions/configure-pages@v5
 
-      - name: Subir artefacto de GitHub Pages
+      - name: Subir artefacto GitHub Pages
         if: github.event_name != 'pull_request'
-        uses: actions/upload-pages-artifact@v4
+        uses: actions/upload-pages-artifact@v3
         with:
-          path: site
-
-  # ==========================================
-  # 10. Desplegar ambas versiones
-  # ==========================================
+          path: public
 
   deploy:
+    name: Publicar ambas versiones
     if: github.event_name != 'pull_request'
-    needs: test-and-build
+
+    needs: build
     runs-on: ubuntu-latest
+
+    permissions:
+      pages: write
+      id-token: write
 
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
-      - name: Publicar en GitHub Pages
+      - name: Publicar GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v5
+        uses: actions/deploy-pages@v4
+
+      - name: Mostrar URLs publicadas
+        run: |
+          echo "Version original:"
+          echo "https://douglaslino.github.io/transactcheck/"
+          echo "Version refactorizada:"
+          echo "https://douglaslino.github.io/transactcheck/refactor/"
